@@ -81,6 +81,24 @@ function appStart() {
     }
   };
 
+  const handleClickKeyboard = (event) => {
+    const clickedKey = event.currentTarget.getAttribute("data-key");
+    const thisBlock = document.querySelector(
+      `.board-column[data-index='${attempts}${index}']`
+    );
+    if (clickedKey === "BACK") {
+      handleBackspace();
+    } else if (index === 5) {
+      if (clickedKey === "Enter") handleEnterKey();
+      else return;
+    } else if (clickedKey === "Enter") {
+      handleEnterKey();
+    } else {
+      thisBlock.innerText = clickedKey;
+      index++;
+    }
+  };
+
   const startTimer = () => {
     const 시작시간 = new Date();
     function setTimer() {
@@ -92,10 +110,13 @@ function appStart() {
       timeDiv.innerText = `${분.padStart(2, "0")}:${초.padStart(2, "0")}`;
     }
     timer = setInterval(setTimer, 1000);
-    console.log(timer);
   };
   startTimer();
   window.addEventListener("keydown", handleKeydown);
+  const keyboardColumn = document.querySelectorAll(".keyboard-column");
+  keyboardColumn.forEach((column) => {
+    column.addEventListener("click", handleClickKeyboard);
+  });
 }
 
 appStart();
