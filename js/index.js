@@ -2,16 +2,27 @@ const answer = "APPLE";
 
 let index = 0;
 let attempts = 0;
+let timer;
 
 function appStart() {
-  const nextLine = () => {
-    if (attempts === 6) return gameOver();
-    attempts++;
-    index = 0;
+  const displayGameOver = () => {
+    const div = document.createElement("div");
+    div.innerText = "게임이 종료 됐습니다.";
+    div.style =
+      "display:flex; justify-content:center; align-items:center; position:absolute; top:38vh; left:39vw; background-color:#fff; width:200px; height:80px;";
+    document.body.appendChild(div);
   };
 
   const gameOver = () => {
     window.removeEventListener("keydown", handleKeydown);
+    displayGameOver();
+    clearInterval(timer);
+  };
+
+  const nextLine = () => {
+    if (attempts === 6) return gameOver();
+    attempts++;
+    index = 0;
   };
 
   const handleEnterKey = () => {
@@ -38,6 +49,18 @@ function appStart() {
     nextLine();
   };
 
+  const handleBackspace = () => {
+    if (index > 0) {
+      const preBlock = document.querySelector(
+        `.board-column[data-index='${attempts}${index - 1}']`
+      );
+      preBlock.innerText = "";
+    }
+    if (index !== 0) {
+      index--;
+    }
+  };
+
   const handleKeydown = (event) => {
     const key = event.key.toUpperCase();
     const keyCode = event.keyCode;
@@ -45,7 +68,9 @@ function appStart() {
       `.board-column[data-index='${attempts}${index}']`
     );
 
-    if (index === 5) {
+    if (event.key === "Backspace") {
+      handleBackspace();
+    } else if (index === 5) {
       if (event.key === "Enter") handleEnterKey();
       else return;
     } else if (event.key === "Enter") {
@@ -55,6 +80,21 @@ function appStart() {
       index++;
     }
   };
+
+  const startTimer = () => {
+    const 시작시간 = new Date();
+    function setTimer() {
+      const 현재시간 = new Date();
+      const 흐른시간 = new Date(현재시간 - 시작시간);
+      const 분 = 흐른시간.getMinutes().toString();
+      const 초 = 흐른시간.getSeconds().toString();
+      const timeDiv = document.querySelector("#timer");
+      timeDiv.innerText = `${분.padStart(2, "0")}:${초.padStart(2, "0")}`;
+    }
+    timer = setInterval(setTimer, 1000);
+    console.log(timer);
+  };
+  startTimer();
   window.addEventListener("keydown", handleKeydown);
 }
 
